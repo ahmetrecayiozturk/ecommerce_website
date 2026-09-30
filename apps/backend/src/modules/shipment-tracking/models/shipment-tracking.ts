@@ -26,7 +26,7 @@ const ShipmentTracking = model.define("shipment_tracking", {
       "failed",
     ])
     .default("preparing"),
-  status_history: model.json().default([]), // [{status, note, created_at}]
+  status_history: model.json().default([] as any),
 })
 
 export default ShipmentTracking

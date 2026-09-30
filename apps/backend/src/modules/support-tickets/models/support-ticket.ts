@@ -9,7 +9,7 @@ const SupportTicket = model.define("support_ticket", {
   subject: model.text(),
   status: model.enum(["open", "closed"]).default("open"),
   // [{ sender: "customer" | "admin", message: string, created_at: string }]
-  messages: model.json().default([]),
+  messages: model.json().default([] as any),
 })
 
 export default SupportTicket
