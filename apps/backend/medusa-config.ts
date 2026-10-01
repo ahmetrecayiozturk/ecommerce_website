@@ -3,8 +3,9 @@ import { loadEnv, defineConfig } from '@medusajs/framework/utils'
 loadEnv(process.env.NODE_ENV || 'development', process.cwd())
 
 module.exports = defineConfig({
-  admin: {
-    disable: false
+admin: {
+    disable: false,
+    backendUrl: "https://ecommerce-website-7nwl.onrender.com",
   },
   projectConfig: {
     databaseUrl: process.env.DATABASE_URL,
