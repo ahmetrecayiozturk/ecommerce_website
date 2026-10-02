@@ -12,14 +12,20 @@
     "headless",
     "medusa"
   ],
+  "engines": {
+    "node": "^20.19.0 || >=22.12.0"
+  },
+  "packageManager": "npm@12.0.1",
   "scripts": {
+    "dev": "medusa develop",
     "build": "medusa build",
     "start": "medusa start",
-    "dev": "medusa develop",
+    "migrate": "medusa db:migrate",
+    "seed": "medusa exec ./src/migration-scripts/initial-data-seed.ts",
     "lint": "medusa lint",
+    "test:unit": "TEST_TYPE=unit NODE_OPTIONS=--experimental-vm-modules jest --silent --runInBand --forceExit",
     "test:integration:http": "TEST_TYPE=integration:http NODE_OPTIONS=--experimental-vm-modules jest --silent=false --runInBand --forceExit",
-    "test:integration:modules": "TEST_TYPE=integration:modules NODE_OPTIONS=--experimental-vm-modules jest --silent=false --runInBand --forceExit",
-    "test:unit": "TEST_TYPE=unit NODE_OPTIONS=--experimental-vm-modules jest --silent --runInBand --forceExit"
+    "test:integration:modules": "TEST_TYPE=integration:modules NODE_OPTIONS=--experimental-vm-modules jest --silent=false --runInBand --forceExit"
   },
   "dependencies": {
     "@medusajs/admin-bundler": "2.20.1",
@@ -55,9 +61,5 @@
     "prop-types": "^15.8.1",
     "ts-node": "^10.9.2",
     "yalc": "^1.0.0-pre.53"
-  },
-  "engines": {
-    "node": "^20.19.0 || >=22.12.0"
-  },
-  "packageManager": "npm@12.0.1"
+  }
 }
