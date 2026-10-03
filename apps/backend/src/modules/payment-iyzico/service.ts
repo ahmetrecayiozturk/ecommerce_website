@@ -75,12 +75,16 @@ class IyzicoPaymentProviderService extends AbstractPaymentProvider<IyzicoOptions
         name: customer?.first_name || "Musteri",
         surname: customer?.last_name || "-",
         email: customer?.email || "guest@example.com",
-        identityNumber: identityNumber, // Artık tamamen doğrulanmış ve dolu bir TC gidiyor
+        gsmNumber: customer?.phone || customer?.billing_address?.phone || "+905000000000",
+        identityNumber,
         registrationAddress:
           customer?.billing_address?.address_1 || "Adres belirtilmedi",
         ip: (context as any)?.ip_address || "127.0.0.1",
         city: customer?.billing_address?.city || "Istanbul",
         country: customer?.billing_address?.country_code || "Turkey",
+        zipCode: customer?.billing_address?.postal_code || "00000",
+        registrationDate: this.toIyzicoDate(customer?.created_at),
+        lastLoginDate: this.toIyzicoDate(customer?.updated_at),
       },
       shippingAddress: this.mapAddress(customer?.shipping_address),
       billingAddress: this.mapAddress(customer?.billing_address),
@@ -111,13 +115,14 @@ class IyzicoPaymentProviderService extends AbstractPaymentProvider<IyzicoOptions
     for (let attempt = 1; attempt <= 3; attempt++) {
       try {
         const result = await callIyzico()
-        console.log("IYZICO RESULT:", JSON.stringify(result))
+        console.log("IYZICO RESULT:", this.serializeForLog(result))
 
         if (result.status !== "success") {
+          console.error("IYZICO RESULT ERROR:", this.serializeForLog(result))
           return {
             id: conversationId,
             data: {
-              error: result?.errorMessage || "iyzico baslatma hatasi",
+              error: this.getIyzicoErrorMessage(result),
             },
           }
         }
@@ -133,7 +138,10 @@ class IyzicoPaymentProviderService extends AbstractPaymentProvider<IyzicoOptions
         }
       } catch (err: any) {
         lastError = err
-        console.log(`IYZICO ERROR (deneme ${attempt}/3):`, JSON.stringify(err))
+        console.error(
+          `IYZICO ERROR (deneme ${attempt}/3):`,
+          this.serializeForLog(err)
+        )
         await new Promise((r) => setTimeout(r, 500))
       }
     }
@@ -141,7 +149,7 @@ class IyzicoPaymentProviderService extends AbstractPaymentProvider<IyzicoOptions
     return {
       id: conversationId,
       data: {
-        error: lastError?.message || "iyzico'ya baglanilamadi (3 deneme basarisiz)",
+        error: this.getIyzicoErrorMessage(lastError),
       },
     }
   }
@@ -330,6 +338,49 @@ class IyzicoPaymentProviderService extends AbstractPaymentProvider<IyzicoOptions
       eur: Iyzipay.CURRENCY.EUR,
     }
     return map[(code || "try").toLowerCase()] || Iyzipay.CURRENCY.TRY
+  }
+
+  private toIyzicoDate(value?: string | Date): string {
+    const date = value ? new Date(value) : new Date()
+
+    if (Number.isNaN(date.getTime())) {
+      return this.toIyzicoDate()
+    }
+
+    const pad = (part: number) => String(part).padStart(2, "0")
+
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(
+      date.getDate()
+    )} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(
+      date.getSeconds()
+    )}`
+  }
+
+  private serializeForLog(value: any): string {
+    if (value instanceof Error) {
+      return JSON.stringify({
+        name: value.name,
+        message: value.message,
+        code: (value as any).code,
+        response: (value as any).response,
+        stack: value.stack,
+      })
+    }
+
+    try {
+      return JSON.stringify(value)
+    } catch {
+      return String(value)
+    }
+  }
+
+  private getIyzicoErrorMessage(value: any): string {
+    return (
+      value?.errorMessage ||
+      value?.message ||
+      value?.errorCode ||
+      "iyzico ödeme başlatma hatası"
+    )
   }
 
   private mapAddress(address: any) {
