@@ -427,16 +427,6 @@ export async function placeOrder(cartId?: string) {
       })
       .catch(medusaError)
 
-    for (const shippingMethod of currentCart.shipping_methods ?? []) {
-      await sdk.client
-        .fetch(`/store/carts/${id}/shipping-methods/${shippingMethod.id}`, {
-          method: "DELETE",
-          headers,
-          cache: "no-store",
-        })
-        .catch(medusaError)
-    }
-
     const shippingOption = shipping_options.find(
       (option) => !option.insufficient_inventory
     )
