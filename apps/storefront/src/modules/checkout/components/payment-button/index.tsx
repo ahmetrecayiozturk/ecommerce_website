@@ -216,13 +216,13 @@ const IyzicoPaymentButton = ({
   const [submitting, setSubmitting] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
-  // Ödeme session verilerini çekiyoruz
   const paymentSession = cart.payment_collection?.payment_sessions?.[0]
-  const sessionData = paymentSession?.data as any || {}
-  
-  // Backend'den gelen url ve hata mesajını ayırıyoruz
-  const paymentPageUrl = sessionData.paymentPageUrl as string | undefined
-  const backendError = sessionData.error as string | undefined // TC Kimlik hatası buraya gelecek
+  const sessionData = (paymentSession?.data ?? {}) as {
+    paymentPageUrl?: string
+    error?: string
+  }
+  const paymentPageUrl = sessionData.paymentPageUrl
+  const backendError = sessionData.error
 
   const handlePayment = () => {
     if (!paymentPageUrl) {
@@ -237,17 +237,15 @@ const IyzicoPaymentButton = ({
 
   return (
     <>
-      {/* Backend'den gelen bir hata (TC Eksik vs.) varsa ve ödeme linki yoksa, bu kırmızı kutu görünecek */}
       {backendError && !paymentPageUrl && (
         <div className="bg-red-50 text-red-600 p-4 rounded-md text-sm mb-4 border border-red-200">
-          <p className="font-semibold mb-1">Eksik veya Hatalı Bilgi!</p>
+          <p className="font-semibold mb-1">Ödeme başlatılamadı</p>
           <p>{backendError}</p>
-          {/* Linki profil sayfana yönlendiriyoruz */}
           <a 
             href="/account/profile" 
             className="underline mt-2 inline-block font-medium hover:text-red-800 transition-colors"
           >
-            Profilinize gidip TC Kimlik Numaranızı eklemek için tıklayın.
+            Profil bilgilerinizi kontrol etmek için tıklayın.
           </a>
         </div>
       )}

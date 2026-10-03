@@ -402,6 +402,50 @@ export async function placeOrder(cartId?: string) {
     ...(await getAuthHeaders()),
   }
 
+  const currentCart = await sdk.client
+    .fetch<HttpTypes.StoreCartResponse>(`/store/carts/${id}`, {
+      method: "GET",
+      query: {
+        fields:
+          "id,items,shipping_methods,shipping_address,billing_address,email",
+      },
+      headers,
+      cache: "no-store",
+    })
+    .then(({ cart }) => cart)
+    .catch(medusaError)
+
+  if (!currentCart.shipping_methods?.length && currentCart.items?.length) {
+    const { shipping_options } = await sdk.client
+      .fetch<{
+        shipping_options: HttpTypes.StoreCartShippingOption[]
+      }>("/store/shipping-options", {
+        method: "GET",
+        query: { cart_id: id },
+        headers,
+        cache: "no-store",
+      })
+      .catch(medusaError)
+
+    const shippingOption = shipping_options.find(
+      (option) => !option.insufficient_inventory
+    )
+
+    if (!shippingOption) {
+      throw new Error(
+        "Bu sipariş için uygun bir teslimat seçeneği bulunamadı."
+      )
+    }
+
+    await sdk.store.cart
+      .addShippingMethod(id, { option_id: shippingOption.id }, {}, headers)
+      .then(async () => {
+        const cartCacheTag = await getCacheTag("carts")
+        revalidateTag(cartCacheTag)
+      })
+      .catch(medusaError)
+  }
+
   const cartRes = await sdk.store.cart
     .complete(id, {}, headers)
     .then(async (cartRes) => {
