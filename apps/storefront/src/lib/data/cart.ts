@@ -407,7 +407,7 @@ export async function placeOrder(cartId?: string) {
       method: "GET",
       query: {
         fields:
-          "id,items,shipping_methods,shipping_address,billing_address,email",
+          "id,*items,*shipping_methods,shipping_address,billing_address,email",
       },
       headers,
       cache: "no-store",
