@@ -36,7 +36,7 @@ class IyzicoPaymentProviderService extends AbstractPaymentProvider<IyzicoOptions
     this.client_ = new Iyzipay({
       apiKey: options.api_key,
       secretKey: options.secret_key,
-      uri: options.base_url,
+      uri: this.normalizeBaseUrl(options.base_url),
     })
   }
 
@@ -381,6 +381,14 @@ class IyzicoPaymentProviderService extends AbstractPaymentProvider<IyzicoOptions
       value?.errorCode ||
       "iyzico ödeme başlatma hatası"
     )
+  }
+
+  private normalizeBaseUrl(value: string): string {
+    const baseUrl = value.trim()
+    const markdownUrl = baseUrl.match(/^\[(https?:\/\/[^\]]+)\]\((https?:\/\/[^)]+)\)$/)
+    const normalizedUrl = markdownUrl?.[2] ?? baseUrl
+
+    return normalizedUrl.replace(/\/+$/, "")
   }
 
   private mapAddress(address: any) {
