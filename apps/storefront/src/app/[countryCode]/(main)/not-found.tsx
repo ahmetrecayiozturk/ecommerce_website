@@ -1,4 +1,4 @@
-import { Metadata } from "next"
+/*import { Metadata } from "next"
 
 import InteractiveLink from "@modules/common/components/interactive-link"
 
@@ -15,6 +15,18 @@ export default function NotFound() {
         Bu sayfa mevcut değil veya taşınmış olabilir. Lütfen URL'yi kontrol edin veya ana sayfaya dönün.
       </p>
       <InteractiveLink href="/">Başlangıç Sayfasına Git</InteractiveLink>
+    </div>
+  )
+}
+
+*/
+import React from "react"
+
+export default function NotFound() {
+  return (
+    <div className="flex flex-col items-center justify-center min-h-screen">
+      <h1 className="text-4xl font-bold mb-4">404 - Sayfa Bulunamadı</h1>
+      <p>Aradığınız sayfa mevcut değil.</p>
     </div>
   )
 }
