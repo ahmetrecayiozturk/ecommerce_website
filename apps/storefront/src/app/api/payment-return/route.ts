@@ -2,7 +2,6 @@ import { sdk } from "@lib/config"
 import { placeOrder } from "@lib/data/cart"
 import { getAuthHeaders, setCartId } from "@lib/data/cookies"
 import { HttpTypes } from "@medusajs/types"
-import { unstable_rethrow } from "next/navigation"
 import { NextRequest, NextResponse } from "next/server"
 
 export async function GET(req: NextRequest) {
@@ -75,7 +74,15 @@ export async function GET(req: NextRequest) {
   try {
     await placeOrder(cartId)
   } catch (error) {
-    unstable_rethrow(error)
+    if (
+      error &&
+      typeof error === "object" &&
+      "digest" in error &&
+      typeof error.digest === "string" &&
+      error.digest.startsWith("NEXT_REDIRECT")
+    ) {
+      throw error
+    }
 
     return NextResponse.redirect(`${origin}${prefix}/cart?error=order_failed`)
   }

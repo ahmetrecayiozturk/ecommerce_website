@@ -415,35 +415,10 @@ export async function placeOrder(cartId?: string) {
     .then(({ cart }) => cart)
     .catch(medusaError)
 
-  if (currentCart.items?.length) {
-    const { shipping_options } = await sdk.client
-      .fetch<{
-        shipping_options: HttpTypes.StoreCartShippingOption[]
-      }>("/store/shipping-options", {
-        method: "GET",
-        query: { cart_id: id },
-        headers,
-        cache: "no-store",
-      })
-      .catch(medusaError)
-
-    const shippingOption = shipping_options.find(
-      (option) => !option.insufficient_inventory
+  if (currentCart.items?.length && !currentCart.shipping_methods?.length) {
+    throw new Error(
+      "Lütfen ödeme öncesinde bir teslimat yöntemi seçin ve tekrar deneyin."
     )
-
-    if (!shippingOption) {
-      throw new Error(
-        "Bu sipariş için uygun bir teslimat seçeneği bulunamadı."
-      )
-    }
-
-    await sdk.store.cart
-      .addShippingMethod(id, { option_id: shippingOption.id }, {}, headers)
-      .then(async () => {
-        const cartCacheTag = await getCacheTag("carts")
-        revalidateTag(cartCacheTag)
-      })
-      .catch(medusaError)
   }
 
   const cartRes = await sdk.store.cart

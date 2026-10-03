@@ -3,24 +3,38 @@ import type {
   MedusaResponse,
 } from "@medusajs/framework/http"
 
-// iyzico, Checkout Form ödemesi tamamlandığında bu adrese
-// application/x-www-form-urlencoded POST isteği ile "token" gönderir.
-// Biz bu token'ı storefront'un ödeme sonucu sayfasına query param
-// olarak iletip yönlendiriyoruz. Storefront orada
-// cart'ı "complete" ederek (authorizePayment tetiklenir) siparişi tamamlar.
 export async function POST(
   req: MedusaRequest,
   res: MedusaResponse
 ): Promise<void> {
-  const token = (req.body as any)?.token
+  const body = req.body as { token?: string }
+  const token = body?.token
+  const storefrontUrl = process.env.STOREFRONT_URL
+  const countryCode = (
+    process.env.STOREFRONT_COUNTRY_CODE || "tr"
+  ).toLowerCase()
 
-  const storefrontUrl =
-    process.env.STOREFRONT_URL || "http://localhost:8000"
-
-  if (!token) {
-    res.redirect(`${storefrontUrl}/checkout?error=missing_token`)
+  if (!storefrontUrl) {
+    res.status(500).json({ message: "STOREFRONT_URL is not configured" })
     return
   }
 
-  res.redirect(`${storefrontUrl}/tr/checkout/iyzico-result?token=${token}`)
+  let redirectUrl: URL
+  try {
+    redirectUrl = new URL(storefrontUrl)
+  } catch {
+    res.status(500).json({ message: "STOREFRONT_URL is invalid" })
+    return
+  }
+
+  if (!token) {
+    redirectUrl.pathname = `/${countryCode}/checkout`
+    redirectUrl.search = "?error=missing_token"
+    res.redirect(redirectUrl.toString())
+    return
+  }
+
+  redirectUrl.pathname = `/${countryCode}/checkout/iyzico-result`
+  redirectUrl.search = new URLSearchParams({ token }).toString()
+  res.redirect(redirectUrl.toString())
 }
