@@ -3,7 +3,14 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": ["dist/**", ".next/**"]
+      "outputs": ["dist/**", ".next/**"],
+      "env": [
+        "NEXT_PUBLIC_MEDUSA_BACKEND_URL",
+        "NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY",
+        "NEXT_PUBLIC_DEFAULT_REGION",
+        "NEXT_PUBLIC_BASE_URL",
+        "REVALIDATE_SECRET"
+      ]
     },
     "dev": {
       "cache": false,
