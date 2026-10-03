@@ -63,7 +63,7 @@ const ReturnRequestsPage = () => {
   }
 
   useEffect(() => {
-    loadRequests()
+    void loadRequests()
   }, [status])
 
   const updateStatus = async (
