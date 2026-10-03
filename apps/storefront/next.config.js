@@ -18,6 +18,8 @@ const nextConfig = {
       fullUrl: true,
     },
   },
+  // Existing storefront lint/type debt is tracked separately from production
+  // deployment. These checks must run in CI before this bypass is removed.
   eslint: {
     ignoreDuringBuilds: true,
   },
