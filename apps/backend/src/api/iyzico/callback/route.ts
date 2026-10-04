@@ -15,7 +15,7 @@ export async function POST(
   ).toLowerCase()
 
   if (!storefrontUrl) {
-    res.status(500).json({ message: "STOREFRONT_URL yapılandırılmamış." })
+    res.status(500).json({ message: "STOREFRONT_URL is not configured" })
     return
   }
 
@@ -23,7 +23,7 @@ export async function POST(
   try {
     redirectUrl = new URL(storefrontUrl)
   } catch {
-    res.status(500).json({ message: "STOREFRONT_URL geçersiz." })
+    res.status(500).json({ message: "STOREFRONT_URL is invalid" })
     return
   }
 

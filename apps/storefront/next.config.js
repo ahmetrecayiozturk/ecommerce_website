@@ -1,8 +1,6 @@
 const checkEnvVariables = require("./check-env-variables")
-const createNextIntlPlugin = require("next-intl/plugin")
 
 checkEnvVariables()
-const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts")
 
 /**
  * Medusa Cloud-related environment variables
@@ -56,4 +54,4 @@ const nextConfig = {
   },
 }
 
-module.exports = withNextIntl(nextConfig)
+module.exports = nextConfig

@@ -279,7 +279,7 @@ const ReturnRequestsPage = () => {
 }
 
 export const config = defineRouteConfig({
-  label: "İade Talepleri",
+  label: "Return Requests",
   icon: ChatBubbleLeftRight,
 })
 

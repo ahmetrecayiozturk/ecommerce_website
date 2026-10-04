@@ -15,7 +15,7 @@ async function getRegionMap(cacheId: string) {
 
   if (!BACKEND_URL) {
     throw new Error(
-      "Bölgeler alınamadı. Medusa Admin'de bölgeleri oluşturduğunuzdan ve NEXT_PUBLIC_MEDUSA_BACKEND_URL değişkenini tanımladığınızdan emin olun."
+      "Middleware.ts: Error fetching regions. Did you set up regions in your Medusa Admin and define a NEXT_PUBLIC_MEDUSA_BACKEND_URL environment variable."
     )
   }
 
@@ -37,7 +37,7 @@ async function getRegionMap(cacheId: string) {
     })
 
     if (!response.ok) {
-      throw new Error(`Backend ${response.status} durum kodunu döndürdü.`)
+      throw new Error(`Backend returned ${response.status}`)
     }
 
     const json = await response.json()

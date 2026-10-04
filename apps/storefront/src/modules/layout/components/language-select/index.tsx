@@ -9,7 +9,6 @@ import {
 } from "@headlessui/react"
 import { Fragment, useEffect, useMemo, useState, useTransition } from "react"
 import { useRouter } from "next/navigation"
-import { useTranslations } from "next-intl"
 import ReactCountryFlag from "react-country-flag"
 
 import { StateType } from "@lib/hooks/use-toggle-state"
@@ -64,8 +63,8 @@ const getLocalizedLanguageName = (
 
 const DEFAULT_OPTION: LanguageOption = {
   code: "",
-  name: "Varsayılan",
-  localizedName: "Varsayılan",
+  name: "Default",
+  localizedName: "Default",
   countryCode: "",
 }
 
@@ -77,7 +76,6 @@ const LanguageSelect = ({
   const [current, setCurrent] = useState<LanguageOption | undefined>(undefined)
   const [isPending, startTransition] = useTransition()
   const router = useRouter()
-  const t = useTranslations("common")
 
   const { state, close } = toggleState
 
@@ -130,7 +128,7 @@ const LanguageSelect = ({
       >
         <ListboxButton className="py-1 w-full">
           <div className="txt-compact-small flex items-start gap-x-2">
-            <span>{t("language")}:</span>
+            <span>Language:</span>
             {current && (
               <span className="txt-compact-small flex items-center gap-x-2">
                 {current.countryCode && (
