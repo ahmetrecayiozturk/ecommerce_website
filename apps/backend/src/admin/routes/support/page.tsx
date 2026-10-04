@@ -188,7 +188,7 @@ const SupportPage = () => {
 }
 
 export const config = defineRouteConfig({
-  label: "Support",
+  label: "Destek",
   icon: ChatBubbleLeftRight,
 })
 

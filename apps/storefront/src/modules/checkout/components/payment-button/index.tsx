@@ -7,6 +7,7 @@ import { Button } from "@modules/common/components/ui"
 import { useElements, useStripe } from "@stripe/react-stripe-js"
 import { useParams } from "next/navigation"
 import React, { useState } from "react"
+import { useTranslations } from "next-intl"
 import ErrorMessage from "../error-message"
 
 type PaymentButtonProps = {
@@ -29,6 +30,7 @@ const PaymentButton: React.FC<PaymentButtonProps> = ({
     (cart.shipping_methods?.length ?? 0) < 1
 
   const paymentSession = cart.payment_collection?.payment_sessions?.[0]
+  const t = useTranslations("checkout")
 
   switch (true) {
     case isStripeLike(paymentSession?.provider_id):
@@ -52,7 +54,7 @@ const PaymentButton: React.FC<PaymentButtonProps> = ({
         <ManualTestPaymentButton notReady={notReady} data-testid={dataTestId} />
       )
     default:
-      return <Button disabled>Bir ödeme yöntemi seçin</Button>
+      return <Button disabled>{t("selectPaymentMethod")}</Button>
   }
 }
 
@@ -67,6 +69,7 @@ const StripePaymentButton = ({
 }) => {
   const [submitting, setSubmitting] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const t = useTranslations("checkout")
 
   const onPaymentCompleted = async () => {
     await placeOrder()
@@ -155,7 +158,7 @@ const StripePaymentButton = ({
         isLoading={submitting}
         data-testid={dataTestId}
       >
-        Place order
+        {t("placeOrder")}
       </Button>
       <ErrorMessage
         error={errorMessage}
@@ -168,6 +171,7 @@ const StripePaymentButton = ({
 const ManualTestPaymentButton = ({ notReady }: { notReady: boolean }) => {
   const [submitting, setSubmitting] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const t = useTranslations("checkout")
 
   const onPaymentCompleted = async () => {
     await placeOrder()
@@ -194,7 +198,7 @@ const ManualTestPaymentButton = ({ notReady }: { notReady: boolean }) => {
         size="large"
         data-testid="submit-order-button"
       >
-        Place order
+        {t("placeOrder")}
       </Button>
       <ErrorMessage
         error={errorMessage}
@@ -215,6 +219,7 @@ const IyzicoPaymentButton = ({
 }) => {
   const [submitting, setSubmitting] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const t = useTranslations("checkout")
 
   const paymentSession = cart.payment_collection?.payment_sessions?.[0]
   const sessionData = (paymentSession?.data ?? {}) as {
@@ -227,7 +232,7 @@ const IyzicoPaymentButton = ({
   const handlePayment = () => {
     if (!paymentPageUrl) {
       setErrorMessage(
-        "Ödeme sayfası hazırlanamadı, lütfen sayfayı yenileyip tekrar deneyin."
+        t("paymentPageUnavailable")
       )
       return
     }
@@ -239,13 +244,13 @@ const IyzicoPaymentButton = ({
     <>
       {backendError && !paymentPageUrl && (
         <div className="bg-red-50 text-red-600 p-4 rounded-md text-sm mb-4 border border-red-200">
-          <p className="font-semibold mb-1">Ödeme başlatılamadı</p>
+          <p className="font-semibold mb-1">{t("paymentCouldNotStart")}</p>
           <p>{backendError}</p>
           <a 
             href="/account/profile" 
             className="underline mt-2 inline-block font-medium hover:text-red-800 transition-colors"
           >
-            Profil bilgilerinizi kontrol etmek için tıklayın.
+            {t("checkProfile")}
           </a>
         </div>
       )}
@@ -257,7 +262,7 @@ const IyzicoPaymentButton = ({
         size="large"
         data-testid={dataTestId}
       >
-        iyzico ile Öde
+        {t("payWithIyzico")}
       </Button>
       
       <ErrorMessage

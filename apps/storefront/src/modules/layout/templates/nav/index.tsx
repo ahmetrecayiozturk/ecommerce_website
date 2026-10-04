@@ -7,8 +7,10 @@ import { StoreRegion } from "@medusajs/types"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import CartButton from "@modules/layout/components/cart-button"
 import SideMenu from "@modules/layout/components/side-menu"
+import { getTranslations } from "next-intl/server"
 
 export default async function Nav() {
+  const t = await getTranslations("common")
   const [regions, locales, currentLocale] = await Promise.all([
     listRegions().then((regions: StoreRegion[]) => regions),
     listLocales(),
@@ -42,7 +44,7 @@ export default async function Nav() {
                 href="/account"
                 data-testid="nav-account-link"
               >
-                Hesabım
+                {t("account")}
               </LocalizedClientLink>
             </div>
             <Suspense
@@ -52,7 +54,7 @@ export default async function Nav() {
                   href="/cart"
                   data-testid="nav-cart-link"
                 >
-                  Siparişler (0)
+                  {t("cartCount", { count: 0 })}
                 </LocalizedClientLink>
               }
             >
