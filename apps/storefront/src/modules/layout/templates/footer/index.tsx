@@ -2,8 +2,10 @@ import { listCategories } from "@lib/data/categories";
 import { listCollections } from "@lib/data/collections";
 import { Text, clx } from "@modules/common/components/ui";
 import LocalizedClientLink from "@modules/common/components/localized-client-link";
+import { getTranslations } from "next-intl/server";
 
 export default async function Footer() {
+  const t = await getTranslations("footer");
   const { collections } = await listCollections({
     fields: "*products",
   });
@@ -28,7 +30,7 @@ export default async function Footer() {
             {productCategories && productCategories?.length > 0 && (
               <div className="flex flex-col gap-y-2">
                 <span className="txt-small-plus txt-ui-fg-base">
-                  Kategoriler
+                  {t("categories")}
                 </span>
                 <ul
                   className="grid grid-cols-1 gap-2"
@@ -88,7 +90,7 @@ export default async function Footer() {
             {collections && collections.length > 0 && (
               <div className="flex flex-col gap-y-2">
                 <span className="txt-small-plus txt-ui-fg-base">
-                  Koleksiyonlar
+                  {t("collections")}
                 </span>
                 <ul
                   className={clx(
@@ -114,22 +116,22 @@ export default async function Footer() {
 
             {/* 3. KURUMSAL (YASAL METİNLER) SÜTUNU - YENİ EKLENDİ */}
             <div className="flex flex-col gap-y-2">
-              <span className="txt-small-plus txt-ui-fg-base">Kurumsal</span>
+              <span className="txt-small-plus txt-ui-fg-base">{t("corporate")}</span>
               <ul className="grid grid-cols-1 gap-y-2 text-ui-fg-subtle txt-small">
                 <li>
                   <LocalizedClientLink href="/content/terms-of-use" className="hover:text-ui-fg-base">
-                    Mesafeli Satış Sözleşmesi
+                    {t("distanceSales")}
                   </LocalizedClientLink>
                 </li>
                 <li>
                   <LocalizedClientLink href="/content/privacy-policy" className="hover:text-ui-fg-base">
-                    Gizlilik Politikası ve KVKK
+                    {t("privacy")}
                   </LocalizedClientLink>
                 </li>
                 <li>
                   {/* İleride iade şartları sayfasını açarsan buraya linkini verebilirsin */}
                   <LocalizedClientLink href="/content/terms-of-use" className="hover:text-ui-fg-base">
-                    İade ve İptal Şartları
+                    {t("returns")}
                   </LocalizedClientLink>
                 </li>
               </ul>
@@ -137,7 +139,7 @@ export default async function Footer() {
 
             {/* 4. İLETİŞİM SÜTUNU */}
             <div className="flex flex-col gap-y-2">
-              <span className="txt-small-plus txt-ui-fg-base">İletişim</span>
+              <span className="txt-small-plus txt-ui-fg-base">{t("contact")}</span>
               <ul className="grid grid-cols-1 gap-y-2 text-ui-fg-subtle txt-small">
                 <li>
                   <a
@@ -176,7 +178,7 @@ export default async function Footer() {
         {/* EN ALT KISIM (COPYRIGHT VE MEDUSA LOGOSUNUN KALDIRILDIĞI YER) */}
         <div className="flex w-full mb-16 justify-center text-ui-fg-muted">
           <Text className="txt-compact-small">
-            © {new Date().getFullYear()} LegnoNest. Tüm hakları saklıdır.
+            © {new Date().getFullYear()} LegnoNest. {t("allRightsReserved")}
           </Text>
         </div>
       </div>
