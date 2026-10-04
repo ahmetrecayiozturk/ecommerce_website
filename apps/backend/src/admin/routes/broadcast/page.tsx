@@ -166,7 +166,7 @@ const BroadcastPage = () => {
 }
 
 export const config = defineRouteConfig({
-  label: "Mesaj Merkezi",
+  label: "Message Center",
   icon: EnvelopeSolid,
 })
 
